@@ -40,6 +40,7 @@ public class SocialMetaTagService {
             tag.setImagem(doc.head().select("meta[property=og:image]").attr("content"));
             tag.setUrl(doc.head().select("meta[property=og:url]").attr("content"));
         } catch (IOException e) {
+            System.out.println("CAIU NO CATCH NA URL INVÁLIDA");
             log.error(e.getMessage(), e.getCause());
         }
 
@@ -55,6 +56,7 @@ public class SocialMetaTagService {
             tag.setImagem(doc.head().select("meta[name=twitter:image]").attr("content"));
             tag.setUrl(doc.head().select("meta[name=twitter:url]").attr("content"));
         } catch (IOException e) {
+            System.out.println("CAIU NO CATCH NA URL INVÁLIDA");
             log.error(e.getMessage(), e.getCause());
         }
 

@@ -19,7 +19,7 @@ public class DemoAjaxApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		//System.out.println(service.getSocialMetaTagByUrl("https://www.udemy.com/course/spring-boot-mvc-com-ajax/").toString());
-		System.out.println(service.getSocialMetaTagByUrl("https://www.livrariasfamiliacrista.com.br/box-11-livros-machado-de-assis-complemento-de-leitura.html").toString());
+		//System.out.println(service.getSocialMetaTagByUrl("https://www.livrariasfamiliacrista.com.br/box-11-livros-machado-de-assis-complemento-de-leitura.html").toString());
 	}
 }
 ;
