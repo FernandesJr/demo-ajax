@@ -39,6 +39,7 @@ public class SocialMetaTagService {
             tag.setSite(doc.head().select("meta[property=og:site_name]").attr("content"));
             tag.setImagem(doc.head().select("meta[property=og:image]").attr("content"));
             tag.setUrl(doc.head().select("meta[property=og:url]").attr("content"));
+            log.info("OpenGraph: {} ", tag);
         } catch (IOException e) {
             System.out.println("CAIU NO CATCH NA URL INVÁLIDA");
             log.error(e.getMessage(), e.getCause());
@@ -55,6 +56,7 @@ public class SocialMetaTagService {
             tag.setSite(doc.head().select("meta[name=twitter:site]").attr("content"));
             tag.setImagem(doc.head().select("meta[name=twitter:image]").attr("content"));
             tag.setUrl(doc.head().select("meta[name=twitter:url]").attr("content"));
+            log.info("Twitter: {} ", tag);
         } catch (IOException e) {
             System.out.println("CAIU NO CATCH NA URL INVÁLIDA");
             log.error(e.getMessage(), e.getCause());

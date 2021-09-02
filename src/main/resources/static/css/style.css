@@ -8,6 +8,7 @@
 	object-fit: cover;
 }
 
+/* Aviso de carregamento load das metas tag da promoção*/
 .loader {
   border: 16px solid #f3f3f3; /* Light grey */
   border-top: 16px solid #3498db; /* Blue */
@@ -20,6 +21,16 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/*Load ao submeter o form de cadastro de promoções*/
+.pre-load {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-right: -50%;
+	transform: translate(-50%, -50%);
 }
 
 
