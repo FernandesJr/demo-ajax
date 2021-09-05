@@ -73,7 +73,7 @@ $("#form-add-promo").submit(function(evt){
             $("#titulo").removeClass("is-invalid");
             $("#preco").removeClass("is-invalid");
             $("#categoria").removeClass("is-invalid");
-            
+
             //Poderia substituir toda essa sequência de um a um por;
             //$(".is-invalid").removeClass("is-invalid");
         },
