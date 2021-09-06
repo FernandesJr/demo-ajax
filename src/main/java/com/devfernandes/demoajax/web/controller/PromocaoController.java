@@ -67,10 +67,37 @@ public class PromocaoController {
     }
 
     @GetMapping("/list/ajax")
-    public String scroll(@RequestParam(name = "page", defaultValue = "1") int page, ModelMap model){
+    public String scroll(@RequestParam(name = "page", defaultValue = "1") int page,
+                         @RequestParam(name = "site", defaultValue = "") String site, ModelMap model){
         Sort sort = Sort.by( Sort.Direction.DESC , "dataCadastro" ); //Ordenando pela data mais recente
         PageRequest pageRequest = PageRequest.of(page,8,sort); //Paginação da JPA :0
-        model.addAttribute("promocoes", promocaoRepository.findAll(pageRequest));
+        //Verificar se a requisição está vindo com ou sem filtro de pesquisa
+        if(site.isEmpty()){
+            model.addAttribute("promocoes", promocaoRepository.findAll(pageRequest));
+        }else{
+            model.addAttribute("promocoes", promocaoRepository.findPromocaoBySite(site, pageRequest));
+        }
+        return "promo-card";
+    }
+
+    @PostMapping("/like/{id}")
+    ResponseEntity<?> adicionarLikes(@PathVariable("id") Long id){
+        promocaoRepository.updateSomarLikes(id);
+        int totLikes = promocaoRepository.findLikesById(id);
+        return ResponseEntity.ok(totLikes);
+    }
+
+    @GetMapping("/site")
+    ResponseEntity<?> autocompleteByTermo(@RequestParam("termo") String termo){
+        List<String> nomesSites = promocaoRepository.findSitesByTermo(termo);
+        return ResponseEntity.ok(nomesSites);
+    }
+
+    @GetMapping("/site/list")
+    String filtarBySite(@RequestParam("site")String site, ModelMap model){
+        Sort sort = Sort.by( Sort.Direction.DESC , "dataCadastro" ); //Ordenando pela data mais recente
+        PageRequest pageRequest = PageRequest.of(0,8,sort); //Paginação da JPA :0
+        model.addAttribute("promocoes", promocaoRepository.findPromocaoBySite(site, pageRequest));
         return "promo-card";
     }
 

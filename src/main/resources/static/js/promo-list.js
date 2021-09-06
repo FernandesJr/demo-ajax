@@ -28,17 +28,19 @@ $(window).scroll(function(){
 //Faz a requisição para mais promoções através de paginação
 
 function loadByScrollBar(pageNumber){
+    var site = $("#autocomplete-input").val();
     $.ajax({
         method: "GET",
         url: "/promocao/list/ajax",
         data: {
-            page: pageNumber
+            page: pageNumber,
+            site: site
         },
         beforeSend: function(){
             $("#loader-img").show();
         },
         success: function(response){
-            //Vem um html completamente prenchido pelo o thymeleaf
+            //Vem um html completamente preenchido pelo o thymeleaf
             console.log("Resposta do servidor: ", response);
             console.log("TAMANHO DA RESPOSTA: ", response.length);
             if(response.length > 150){
@@ -52,3 +54,67 @@ function loadByScrollBar(pageNumber){
         }
     });
 }
+
+//Curtidas
+//Por causa dos Cards adicionados posteriormente ao carregamento do DOM, ao procurar pelo os botões procura-se
+//No Documente que onde contêm tudo mesmo os que foram adicionados posteriormente.
+$(document).on("click", "button[id*='likes-btn-']", function(){
+    //Vai ouvir todos os botões que têm essa composição no nome do id.
+    var id = $(this).attr("id").split("-")[2];
+    console.log("ID: ", id);
+    $.  ajax({
+        method: "POST",
+        url: "/promocao/like/" + id,
+        success: function(response){
+            $("#likes-count-"+id).text(response);
+        },
+        error: function(xhr){
+            alert("Ops.. algum erro aconteceu. " + xhr.statusText + xhr.status);
+        }
+    });
+});
+
+
+//AutoComplete
+$("#autocomplete-input").autocomplete({
+    source: function(request, response){
+        $.ajax({
+            method: "GET",
+            url: "/promocao/site",
+            data: {
+                termo: request.term
+            },
+            success: function(result){
+                response(result);
+            }
+        })
+    },
+});
+
+//Submit busca por site
+$("#autocomplete-submit").on("click", function(){
+    var site = $("#autocomplete-input").val();
+    $.ajax({
+        method: "GET",
+        url: "/promocao/site/list",
+        data: {
+            site: site
+        },
+        beforeSend: function(){
+            $("#fim-btn").hide();
+            pageNumber = 0; //Como a variável já pode ter sido incrementada é necessário zerar.
+            $(".row").fadeOut(400, function(){
+                $(this).empty();
+            });
+        },
+        success: function(response){
+            $(".row").fadeIn(250, function(){
+                $(this).append(response);
+            });
+        },
+        error: function(xhr){
+            alert("Ops... Tivemos algum problema. ", xhr.statusText, xhr.status);
+        }
+    });
+
+});
