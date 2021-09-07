@@ -101,6 +101,8 @@ public class PromocaoController {
         return "promo-card";
     }
 
+
+
     //Sempre que cair uma requisição nesse controller é adicionado esse atributo a resposta
     @ModelAttribute(name = "categorias")
     public List<Categoria> getCategorias(){

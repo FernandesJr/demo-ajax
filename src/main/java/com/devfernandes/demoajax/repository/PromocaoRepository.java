@@ -22,7 +22,7 @@ public interface PromocaoRepository extends JpaRepository<Promocao, Long> {
     @Query("select p.likes from Promocao p where p.id = :id")
     int findLikesById(@Param(value = "id") Long id);;
 
-    //distinct serve que venha apenas um registro de cada nome encontrado
+    //distinct serve para que venha apenas um registro de cada nome encontrado
     @Query("select distinct p.site from Promocao p where p.site like %:site%")
     List<String> findSitesByTermo(@Param("site") String site);
 
