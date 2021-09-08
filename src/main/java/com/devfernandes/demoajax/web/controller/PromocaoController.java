@@ -4,6 +4,7 @@ import com.devfernandes.demoajax.domain.Categoria;
 import com.devfernandes.demoajax.domain.Promocao;
 import com.devfernandes.demoajax.repository.CategoriaRepository;
 import com.devfernandes.demoajax.repository.PromocaoRepository;
+import com.devfernandes.demoajax.service.PromocaoDataTablesServico;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -101,6 +103,16 @@ public class PromocaoController {
         return "promo-card";
     }
 
+    @GetMapping("/table")
+    public String showTabela(){
+        return "promo-datatables";
+    }
+
+    @GetMapping("/datatables/server")
+    public ResponseEntity<?> filterTable(HttpServletRequest request){
+        Map<String, Object> data = new PromocaoDataTablesServico().execute(promocaoRepository, request);
+        return ResponseEntity.ok(data);
+    }
 
 
     //Sempre que cair uma requisição nesse controller é adicionado esse atributo a resposta

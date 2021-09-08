@@ -1,11 +1,14 @@
 package com.devfernandes.demoajax.service;
 
+import com.devfernandes.demoajax.domain.Promocao;
 import com.devfernandes.demoajax.repository.PromocaoRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -17,7 +20,7 @@ public class PromocaoDataTablesServico {
     public Map<String, Object> execute(PromocaoRepository repository, HttpServletRequest request){
 
         int start = Integer.parseInt(request.getParameter("start"));
-        int lenght = Integer.parseInt(request.getParameter("lenght"));
+        int lenght = Integer.parseInt(request.getParameter("length"));
         int draw = Integer.parseInt(request.getParameter("draw"));
 
         //Pagina atual
@@ -32,13 +35,40 @@ public class PromocaoDataTablesServico {
         //Paginação
         Pageable pageable = PageRequest.of(current, lenght, direction, column);
 
+        //Capturar o atributo search
+        String search = searchBy(request);
+
+        //Consulta ao DB
+        Page<Promocao> page = queryBy(search, repository, pageable);
+
         Map<String, Object> json = new LinkedHashMap<>();
-        json.put("draw", null);
-        json.put("recordsTotal", 0);
-        json.put("recordsFiltered", 0);
-        json.put("data", null);
-        return null;
+        json.put("draw", draw);
+        json.put("recordsTotal", page.getTotalElements());
+        json.put("recordsFiltered", page.getTotalElements());
+        json.put("data", page.getContent());
+        return json;
     }
+
+    private Page<Promocao> queryBy(String search, PromocaoRepository repository, Pageable pageable) {
+        if(search.isEmpty()){
+            return repository.findAll(pageable);
+        }
+
+        //Expressão regular
+        if(search.matches("^[0-9]+([.,][0-9]{2})?$")){
+            search = search.replace(",",".");
+            System.out.println(search);
+            return repository.findPromocaoByPreco(new BigDecimal(search), pageable);
+        }
+        return repository.findPromocaoBySiteOrTituloOrCategoria(search, pageable);
+    }
+
+    private String searchBy(HttpServletRequest request) {
+        return request.getParameter("search[value]").isEmpty()
+                ? ""
+                : request.getParameter("search[value]");
+    }
+
 
     private Sort.Direction orderBy(HttpServletRequest request) {
         String order = request.getParameter("order[0][dir]");

@@ -1,5 +1,7 @@
 package com.devfernandes.demoajax.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -14,6 +16,10 @@ public class Categoria implements Serializable {
     @Column(name = "titulo", nullable = false, unique = true)
     private String titulo;
 
+    //O Json ignore serve para evitar uma recursividade ao inserir uma promocao na resposta Json
+    //Ao Chegar para montar a Promocao em Json chega no atributo categoria, a library Jackson vem até aqui
+    //Adicina id e titulo, ao Chegar na lista de Promocao volta a Promocao e recomeça tudo novamente.
+    @JsonIgnore
     @OneToMany(mappedBy = "categoria")
     private List<Promocao> promocoes;
 
