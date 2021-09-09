@@ -68,7 +68,28 @@ $(document).ready(function(){
     $("#btn-edit-table").on("click", function(){
         if(isSelectedRow()){
             var id = getPromoId();
-            $("#modal-form").modal("show");
+            $.ajax({
+                method: "GET",
+                url: "/promocao/edit/" + id,
+                success: function(data){
+                    $("#edt_id").val(data.id);
+                    $("#edt_titulo").val(data.titulo);
+                    $("#edt_preco").val(data.preco.toLocaleString("pt-BR",{
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }));
+                    $("#edt_categoria").val(data.categoria.id);
+                    $("#edt_descricao").val(data.descricao);
+                    $("#edt_linkImagem").val(data.linkImagem);
+                    $("#edt_imagem").attr("src", data.linkImagem);
+                    $("#edt_site").text(data.site);
+
+                    $("#modal-form").modal("show");
+                },
+                error: function(){
+                    alert("Ops.. tivemos um problema inesperado.")
+                }
+            });
         }
     });
 
@@ -88,6 +109,61 @@ $(document).ready(function(){
         var trow = table.row(table.$("tr.selected"));
         return trow.data() !== undefined;
     }
+
+    //Excluir promoção
+    $("#btn-del-modal").on("click", function(){
+        var id = getPromoId();
+        $.ajax({
+            method: "GET",
+            url: "/promocao/deletar/" + id,
+            success: function(){
+                $("#modal-delete").modal("hide");
+                table.ajax.reload();
+            },
+            error: function(){
+                alert("Ops... Aconteceu algum imprevisto, tente mais tarde.");
+            }
+        });
+    });
+
+    $("#btn-edit-modal").on("click", function(){
+        //Json a ser enviado para o servidor
+        var promo = {};
+        promo.titulo = $("#edt_titulo").val();
+        promo.descricao = $("#edt_descricao").val();
+        promo.linkImagem = $("#edt_linkImagem").val();
+        promo.preco = $("#edt_preco").val();
+        promo.categoria = $("#edt_categoria").val();
+        promo.id = $("#edt_id").val();
+
+        $.ajax({
+            method: "POST",
+            url: "/promocao/edit",
+            data: promo,
+            success: function(){
+                $("#modal-form").modal("hide");
+                table.ajax.reload();
+            },
+            statusCode: {
+                422: function(xhr){
+                    console.log("> status error: " + xhr.status);
+                    var errors = $.parseJSON(xhr.responseText); //Convertendo o Json em uma variável
+                    $.each(errors, function(key, val){
+                        $("#edt_"+key).addClass("is-invalid");
+                        $("#error-"+key).addClass("invalid-feedback").append("<span class='error-span'>"+ val + "</span>");
+                    })
+                },
+            }
+        });
+    });
+
+    //Modificando a img no modal de edição
+    $("#edt_linkImagem").on("change", function(){
+        var link = $("#edt_linkImagem").val();
+        $("#edt_imagem").attr("src", link);
+    });
+
+
 
 });
 

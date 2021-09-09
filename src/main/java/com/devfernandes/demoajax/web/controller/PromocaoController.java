@@ -2,6 +2,7 @@ package com.devfernandes.demoajax.web.controller;
 
 import com.devfernandes.demoajax.domain.Categoria;
 import com.devfernandes.demoajax.domain.Promocao;
+import com.devfernandes.demoajax.dto.PromocaoDto;
 import com.devfernandes.demoajax.repository.CategoriaRepository;
 import com.devfernandes.demoajax.repository.PromocaoRepository;
 import com.devfernandes.demoajax.service.PromocaoDataTablesServico;
@@ -112,6 +113,41 @@ public class PromocaoController {
     public ResponseEntity<?> filterTable(HttpServletRequest request){
         Map<String, Object> data = new PromocaoDataTablesServico().execute(promocaoRepository, request);
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/deletar/{id}")
+    public ResponseEntity<?> deletePromo(@PathVariable("id") Long id){
+        promocaoRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/edit/{id}")
+    public ResponseEntity<?> preEdit(@PathVariable("id") Long id){
+        Promocao promocao = promocaoRepository.findById(id).get();
+        return ResponseEntity.ok(promocao);
+    }
+
+    @PostMapping("/edit")
+    public ResponseEntity<?> edit(@Valid PromocaoDto dto, BindingResult result){
+        if(result.hasErrors()){
+            Map<String, String> errors = new HashMap<>(); //Json
+            for (FieldError error: result.getFieldErrors()){
+                errors.put(error.getField(), error.getDefaultMessage());
+            }
+            System.out.println(errors);
+            return ResponseEntity.unprocessableEntity().body(errors);
+        }
+        //Caso não tenha nenhum erro na validação dos campos
+        Promocao promocao = promocaoRepository.findById(dto.getId()).get();
+        promocao.setTitulo(dto.getTitulo());
+        promocao.setDescricao(dto.getDescricao());
+        promocao.setPreco(dto.getPreco());
+        promocao.setLinkImagem(dto.getLinkImagem());
+        promocao.setCategoria(dto.getCategoria());
+
+        promocaoRepository.save(promocao);
+
+        return ResponseEntity.ok().build();
     }
 
 
