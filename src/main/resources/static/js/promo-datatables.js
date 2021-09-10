@@ -71,6 +71,13 @@ $(document).ready(function(){
             $.ajax({
                 method: "GET",
                 url: "/promocao/edit/" + id,
+                beforeSend: function(){
+                    //Retirando avisos de validação
+                    $("span").closest(".error-span").remove(); //Retira a classe de todas as Tag <span> da página
+
+                    //Removendo as bordas danger das validações
+                    $(".is-invalid").removeClass("is-invalid");
+                },
                 success: function(data){
                     $("#edt_id").val(data.id);
                     $("#edt_titulo").val(data.titulo);
@@ -126,6 +133,7 @@ $(document).ready(function(){
         });
     });
 
+    //Edição
     $("#btn-edit-modal").on("click", function(){
         //Json a ser enviado para o servidor
         var promo = {};
@@ -140,9 +148,16 @@ $(document).ready(function(){
             method: "POST",
             url: "/promocao/edit",
             data: promo,
+            beforeSend: function(){
+                //Retirando avisos de validação
+                $("span").closest(".error-span").remove(); //Retira a classe de todas as Tag <span> da página
+
+                //Removendo as bordas danger das validações
+                $(".is-invalid").removeClass("is-invalid");
+            },
             success: function(){
                 $("#modal-form").modal("hide");
-                table.ajax.reload();
+                table.ajax.reload(null, false); //Os parâmetros servem para ao recarregar permanecer na mesma página
             },
             statusCode: {
                 422: function(xhr){
@@ -163,7 +178,18 @@ $(document).ready(function(){
         $("#edt_imagem").attr("src", link);
     });
 
+    // ação para desabilitar botoes ao clicar na paginação
+    $('#table-server_paginate').on('click', 'a', function(){
+        if(!$(this).hasClass('current') && !$(this).hasClass('disabled')) {
+            table.buttons().disable();
+        }
+    });
 
+    // ação para desabilitar botoes ao clicar na search
+    $("#table-server_filter").on("click", "input", function(){
+        table.buttons().disable();
+        $("tr.selected").removeClass("selected");
+    });
 
 });
 
