@@ -10,7 +10,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface PromocaoRepository extends JpaRepository<Promocao, Long> {
 
@@ -37,4 +39,11 @@ public interface PromocaoRepository extends JpaRepository<Promocao, Long> {
 
     @Query("select p from Promocao p where p.preco = :preco")
     Page<Promocao> findPromocaoByPreco(@Param("preco")BigDecimal preco, Pageable pageable);
+
+    @Query("select p.dataCadastro from Promocao p")
+    Page<LocalDateTime> findUltimaDataDePromocao(Pageable pageable);
+
+    @Query("select count(p.id) as count max(p.dataCadastro) as lastDate" +
+            "from Promocao p where p.dataCastro > :data")
+    Map<String, Object> totalAndTotalDePromocaoByDataCadastro(@Param("data") LocalDateTime data);
 }
