@@ -118,3 +118,35 @@ $("#autocomplete-submit").on("click", function(){
     });
 
 });
+
+//Ajax Reverso
+//Iniciado assim que o js é carregado
+function init(){
+    console.log("Init iniciado...");
+
+    //Configurando o dwr no front
+    dwr.engine.setActiveReverseAjax(true);
+    dwr.engine.setErrorHandler(error);
+
+    //Classe  Java
+    DWRAlertaPromocoes.init();
+
+}
+
+function error(excpetion){
+    console.log("Erro.. ",excpetion);
+}
+
+var totalOfertas = 0;
+function showButton(count){
+    totalOfertas = totalOfertas + count;
+    $("#btn-alert").show(function(){
+        $(this)
+            .attr("style", "display: block;")
+            .text("Veja ", totalOfertas, " nova(s) oferta(s)!");
+    });
+}
+
+$(document).ready(function(){
+    init();
+});
