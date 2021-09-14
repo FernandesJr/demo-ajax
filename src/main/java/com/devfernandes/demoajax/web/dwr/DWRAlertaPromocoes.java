@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@RemoteProxy
+@RemoteProxy //é uma configuração da DWR baseada em anotação como parte do processo da criação do canal de comunicação entre servidor e cliente.
 @Component
 public class DWRAlertaPromocoes {
 
@@ -28,21 +28,21 @@ public class DWRAlertaPromocoes {
     private Timer timer;
 
     public LocalDateTime getUltimaDataCadastroByPromocao(){
-        PageRequest pageRequest = PageRequest.of(0,1, Sort.Direction.DESC, "DataCadastro");
+        PageRequest pageRequest = PageRequest.of(0,1, Sort.Direction.DESC, "dataCadastro");
         return repository.findUltimaDataDePromocao(pageRequest)
                 .getContent()
                 .get(0);
     }
 
-    //Thed
-    @RemoteMethod
+    //Thread
+    @RemoteMethod //A ponta de comunicação do lado servido vem desta anotação
     public synchronized void init(){
 
         //Método que tem a conexão com o Js
         System.out.println("Iniciando DWR...");
 
         LocalDateTime lastDate = getUltimaDataCadastroByPromocao();
-        WebContext context = WebContextFactory.get();
+        WebContext context = WebContextFactory.get(); //objeto de contexto do canal de comunicação que foi aberto.
 
         //Agendamento de tarefa
         timer = new Timer();
@@ -55,7 +55,7 @@ public class DWRAlertaPromocoes {
 
         private LocalDateTime lastDate;
         private WebContext context;
-        private Long count;
+        private long count;
 
         public AlertTask(LocalDateTime lastDate, WebContext context) {
             this.lastDate = lastDate;
@@ -87,7 +87,7 @@ public class DWRAlertaPromocoes {
 
                     if(count > 0){
                         //Enviando para o front
-                        ScriptSessions.addFunctionCall("showButton", count);
+                        ScriptSessions.addFunctionCall("showButton", count); //nome da função JS, objeto
                     }
                 }
             });

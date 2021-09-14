@@ -121,6 +121,11 @@ $("#autocomplete-submit").on("click", function(){
 
 //Ajax Reverso
 //Iniciado assim que o js é carregado
+$(document).ready(function() {
+	init();
+});
+
+
 function init(){
     console.log("Init iniciado...");
 
@@ -134,19 +139,47 @@ function init(){
 }
 
 function error(excpetion){
-    console.log("Erro.. ",excpetion);
+    console.log("DWR Erro.. ",excpetion);
 }
 
-var totalOfertas = 0;
+var totalOfertas = 0; //Variável que identifica na tela a quantidade de novas promo que vem do Server
 function showButton(count){
     totalOfertas = totalOfertas + count;
     $("#btn-alert").show(function(){
         $(this)
             .attr("style", "display: block;")
-            .text("Veja ", totalOfertas, " nova(s) oferta(s)!");
+            .text("Veja " + totalOfertas + " nova(s) oferta(s)!");
     });
 }
 
-$(document).ready(function(){
-    init();
+//Botão de novas promoções
+$("#btn-alert").on("click", function(){
+    $.ajax({
+        method: "GET",
+        url: "/promocao/list/ajax",
+        data: {
+            page: 0
+        },
+        beforeSend: function(){
+            $("#btn-alert").attr("style", "display: none;");
+            totalOfertas = 0;
+            $("#loader-img").addClass("loader");
+            $("#fim-btn").hide();
+            pageNumber = 0; //Como a variável já pode ter sido incrementada é necessário zerar.
+            $(".row").fadeOut(400, function(){
+                $(this).empty();
+            });
+        },
+        success: function(response){
+            $("#loader-img").removeClass("loader");
+            $(".row").fadeIn(250, function(){
+                $(this).append(response);
+            });
+        },
+        error: function(xhr){
+            alert("Ops... Tivemos algum problema. ", xhr.statusText, xhr.status);
+        }
+    });
+
 });
+

@@ -9,7 +9,7 @@
 
 	<dwr:configuration />
 	
-	<dwr:annotation-scan base-package="com.devfernandes.demo-ajax.web.dwr"/>
+	<dwr:annotation-scan base-package="com.devfernandes.demoajax.web.dwr"/>
 	
 	<dwr:annotation-config />
 
