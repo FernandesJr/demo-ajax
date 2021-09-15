@@ -129,7 +129,9 @@ $(document).ready(function() {
 function init(){
     console.log("Init iniciado...");
 
-    //Configurando o dwr no front
+    //Esse file Js reconhece esse objeto dwr através de um JS da própria DWR colocado em layout.html
+
+    //Configurando o dwr no front, ativando a comunicação com o servidor
     dwr.engine.setActiveReverseAjax(true);
     dwr.engine.setErrorHandler(error);
 
@@ -143,6 +145,7 @@ function error(excpetion){
 }
 
 var totalOfertas = 0; //Variável que identifica na tela a quantidade de novas promo que vem do Server
+//O retorno do servidor vem para essa função
 function showButton(count){
     totalOfertas = totalOfertas + count;
     $("#btn-alert").show(function(){

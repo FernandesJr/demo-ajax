@@ -70,7 +70,7 @@ public class DWRAlertaPromocoes {
                 @Override
                 public void run() {
                     //Ao Js chamar o init ele irá verificar qual é a última data de cadastro de promoções
-                    //Após o 1 min uma nova tarefa inicia
+                    //Após 1 min uma nova tarefa inicia
                     //Ao chegar aqui eu verifico novamente se a data que o init tem realmente é a última do DB
                     //Se não for ele substitui a lastDate e avisa através do count quantas têm disponíveis
                     Map<String, Object> map = repository.totalAndTotalDePromocaoByDataCadastro(lastDate);
